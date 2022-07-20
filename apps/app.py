@@ -11,8 +11,12 @@ app.resp_options.secure_cookies_by_default = False
 
 
 class GetRegion:
-    def on_get(self, req: falcon.request, res: falcon.response):
-        ip_addr = req.get_param('ip_addr')
+    def on_get(self, req: falcon.Request, res: falcon.Response):
+        if 'CF-CONNECTING-IP' in req.headers:
+            ip_addr = req.headers['CF-CONNECTING-IP']
+        else:
+            ip_addr = req.remote_addr
+
         data = dict()
         if ip_addr is not None and len(ip_addr) > 8:
             try:

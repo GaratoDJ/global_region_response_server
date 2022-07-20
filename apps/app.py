@@ -27,6 +27,7 @@ class GetRegion:
             except:
                 pass
 
+        data['country'] = data['country'] if data['country'] in ['KR', 'US'] else 'US'
         item = dict(country=data['country'], timezone=data['timezone'])
         res.body = json.dumps(item)
         return True

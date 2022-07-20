@@ -22,7 +22,8 @@ class GetRegion:
             except:
                 pass
 
-        res.body = json.dumps(data)
+        item = dict(country=data['country'], timezone=data['timezone'])
+        res.body = json.dumps(item)
         return True
 
 

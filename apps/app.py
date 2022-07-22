@@ -18,17 +18,25 @@ class GetRegion:
         else:
             ip_addr = req.remote_addr
 
-        data = dict()
         if ip_addr is not None and len(ip_addr) > 8:
             try:
                 url = f'http://ipinfo.io/{ip_addr}/json'
                 resp = urlopen(url)
                 data = json.load(resp)
+                data['country'] = data['country'] if data['country'] in ['KR', 'US'] else 'US'
+                item = dict(country=data['country'], timezone=data['timezone'])
             except:
-                pass
+                try:
+                    url = f'http://ip-api.com/json/{ip_addr}'
+                    res = urlopen(url)
+                    data = json.load(res)
+                    data['country'] = data['countryCode'] if data['countryCode'] in ['KR', 'US'] else 'US'
+                    item = dict(country=data['country'], timezone=data['timezone'])
+                except:
+                    return False
+        else:
+            return False
 
-        data['country'] = data['country'] if data['country'] in ['KR', 'US'] else 'US'
-        item = dict(country=data['country'], timezone=data['timezone'])
         res.body = json.dumps(item)
         return True
 

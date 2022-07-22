@@ -18,6 +18,8 @@ class GetRegion:
         else:
             ip_addr = req.remote_addr
 
+        ip_addr = '59.10.188.214'
+
         if ip_addr is not None and len(ip_addr) > 8:
             try:
                 url = f'http://ipinfo.io/{ip_addr}/json'
@@ -28,17 +30,21 @@ class GetRegion:
             except:
                 try:
                     url = f'http://ip-api.com/json/{ip_addr}'
-                    res = urlopen(url)
-                    data = json.load(res)
+                    resp = urlopen(url)
+                    data = json.load(resp)
                     data['country'] = data['countryCode'] if data['countryCode'] in ['KR', 'US'] else 'US'
                     item = dict(country=data['country'], timezone=data['timezone'])
                 except:
-                    return False
+                    return
         else:
-            return False
+            return
 
-        res.body = json.dumps(item)
-        return True
+        if 'item' in locals():
+            res.body = json.dumps(item)
+        else:
+            res.body = '{}'
+
+        return
 
 
 app.add_route('/get_region', GetRegion())
